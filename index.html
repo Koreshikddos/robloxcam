@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roblox Direct Stream</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #111; color: #fff; padding: 20px; }
+        h2 { color: #00ff88; }
+        button { padding: 20px 40px; font-size: 22px; background: #00ff88; border: none; cursor: pointer; border-radius: 10px; margin-top: 20px; font-weight: bold; color: #111; }
+        video { width: 100%; max-width: 400px; display: none; margin: 20px auto; border-radius: 10px; border: 3px solid #00ff88; transform: scaleX(-1); }
+        #status { margin-top: 10px; color: #aaa; }
+    </style>
+</head>
+<body>
+    <h2>Roblox Live Cam (No-Hosting Edition)</h2>
+    <button id="startBtn">ВКЛЮЧИТЬ СТРИМ</button>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <div id="status">Статус: Ожидание запуска</div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const startBtn = document.getElementById('startBtn');
+        const statusDiv = document.getElementById('status');
+        const ctx = canvas.getContext('2d');
+        const size = 30; 
+
+        startBtn.addEventListener('click', async () => {
+            startBtn.style.display = 'none';
+            video.style.display = 'block';
+            statusDiv.innerText = "Статус: Запуск камеры...";
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                video.srcObject = stream;
+                statusDiv.innerText = "Статус: Стрим идет в реальном времени!";
+                
+                setInterval(() => {
+                    canvas.width = size;
+                    canvas.height = size;
+                    ctx.drawImage(video, 0, 0, size, size);
+                    
+                    const imgData = ctx.getImageData(0, 0, size, size).data;
+                    let rgbList = [];
+                    
+                    for (let i = 0; i < imgData.length; i += 4) {
+                        rgbList.push(`${imgData[i]},${imgData[i+1]},${imgData[i+2]}`);
+                    }
+
+                    // Шлем напрямую в скоростной буфер Koreshikddos
+                    fetch('https://kvdb.io/4y9qf7YVv24b6fUq9vA7Sg/stream', {
+                        method: 'POST',
+                        body: rgbList.join('|')
+                    }).catch(e => console.log(e));
+                }, 250); // Частота — 4 кадра в секунду! Без задержек!
+                
+            } catch (err) {
+                statusDiv.innerText = "Ошибка камеры: " + err;
+            }
+        });
+    </script>
+</body>
+</html>

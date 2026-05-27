@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <h2>Roblox Live Cam (Fixed CORS Edition)</h2>
+    <h2>Roblox Live Cam (Beacon Edition)</h2>
     <button id="startBtn">ВКЛЮЧИТЬ СТРИМ</button>
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas" style="display:none;"></canvas>
@@ -48,16 +48,13 @@
                         rgbList.push(`${imgData[i]},${imgData[i+1]},${imgData[i+2]}`);
                     }
 
-                    // ПРОБИВАЕМ БЛОКИРОВКУ БРАУЗЕРА С ПОМОЩЬЮ NO-CORS
-                    fetch('https://kvdb.io/G9CuPSkUQYGVAYehmM2g1v/stream', {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: {
-                            'Content-Type': 'text/plain'
-                        },
-                        body: rgbList.join('|')
-                    }).catch(e => console.log(e));
-                }, 300); 
+                    const payload = rgbList.join('|');
+                    const url = 'https://kvdb.io/G9CuPSkUQYGVAYehmM2g1v/stream';
+                    
+                    -- ИСПОЛЬЗУЕМ BEACON ДЛЯ ПОЛНОГО ОБХОДА CORS БЛОКИРОВОК
+                    navigator.sendBeacon(url, payload);
+                    
+                }, 350); 
                 
             } catch (err) {
                 statusDiv.innerText = "Ошибка камеры: " + err;

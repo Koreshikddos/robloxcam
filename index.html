@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <h2>Roblox Live Cam (Beacon Edition)</h2>
+    <h2>Roblox Live Cam (Fixed Beacon Edition)</h2>
     <button id="startBtn">ВКЛЮЧИТЬ СТРИМ</button>
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas" style="display:none;"></canvas>
@@ -51,7 +51,7 @@
                     const payload = rgbList.join('|');
                     const url = 'https://kvdb.io/G9CuPSkUQYGVAYehmM2g1v/stream';
                     
-                    -- ИСПОЛЬЗУЕМ BEACON ДЛЯ ПОЛНОГО ОБХОДА CORS БЛОКИРОВОК
+                    // Теперь комментарий правильный, скрипт не ломается
                     navigator.sendBeacon(url, payload);
                     
                 }, 350); 
